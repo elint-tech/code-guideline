@@ -24,7 +24,7 @@ def double(value):
     return value * 2.
 ```
 
-Aways start with ```Utility function to...```; it helps to understand what the functions is supposed to do. Also, follow the formatation of arguments and returns, it helps to debug the code and also to understand the code when someone faces it by first time.
+Aways start with ```Utility function to...```; it helps to understand what the functions are supposed to do. Also, follow the formatation of arguments and returns, it helps to debug the code and also to understand the code when someone faces it by first time.
 
 Follow the example to know how to format a function that returns more than one argument:
 
@@ -98,6 +98,15 @@ class ConvDiscriminator:
     By the [paper](https://arxiv.org/abs/1703.10593v6) in section 4, the
     generative network architecture is adopt from [Johnson et al.](
                                                             https://arxiv.org/abs/1603.08155)
+
+    Args:
+        input_shape (tuple): Shape of input tensor
+        dim (int): Number of filters of first convolutional layer
+        num_downsamplings (int): Number of downsamplings
+        norm (str): String indicating which normalization to use. Available: None, 'batch_norm',
+                    'instance_norm' and 'layer_norm'
+        lr_scheduler (tf.keras.optimizers.schedules.LearningRateSchedule): Learning rate scheduler
+                    class
     """
 
     def __init__(self,
@@ -161,7 +170,7 @@ The above example shows a class that builds the convolutional discriminator of a
 
 ## ```Creating a module```
 
-Suppose I want to write a module on my code called ```image``` and inside I'll write two function: ```resize_activations``` and ```resize_activations```. Follow the example to make such a thing:
+Suppose I want to write a module on my code called ```image``` and inside I'll write two functions: ```resize_activations``` and ```normalize_activations```. Follow the example to make such a thing:
 
 ```
 """Core module for image related operations"""
@@ -249,3 +258,16 @@ from image import resize_activations, normalize_activations
 ```
 
 Another option is to write ```import image``` and use ```image.resize_activations``` or ```image.normalize_activations```. This way who reads the code can know exactly from those functions are called.
+
+## ```Defining requirements.txt```
+
+When writing some code, you shall need to define which libraries you're using. **Aways** define the versions, e.g.:
+
+```
+tensorflow==2.1.0
+keras==2.3.1
+scikit-image==0.16.1
+opencv-python==4.1.0.25
+```
+
+It is needed to prevent errors when running the code in another machine beyond it was tested.
