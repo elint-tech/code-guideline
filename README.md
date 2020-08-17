@@ -1,5 +1,5 @@
 # code-guideline
-Maste guideline for coding by Elint
+Master code design guideline for Elint standards of quality.
 
 ![Alt text](./img/meme.jpg)
 
