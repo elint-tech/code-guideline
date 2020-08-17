@@ -5,6 +5,14 @@ Maste guideline for coding by Elint
 
 # Guideline
 
+## ```Files```
+
+Always include the shebang line ```#!/usr/bin/env python``` to new files so $PATH configurations are respected.
+
+## ```Folders```
+
+Always include ```__init__.py``` to folders you intend importing modules from.
+
 ## ```Functions```
 
 Suppose you want to write a function that multiplies and integer by two. A good example of formatting is:
