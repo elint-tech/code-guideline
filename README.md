@@ -1,6 +1,9 @@
 # code-guideline
 Master code design guideline for Elint standards of quality.
 
+_Programs must be written for people to read, and only incidentally for machines to execute._ 
+_-Hal Abelson_
+
 ![Alt text](./img/meme.jpg)
 
 # Guideline
