@@ -1,5 +1,5 @@
 # code-guideline
-Master code design guideline for Elint standards of quality.
+Master Python code design guideline for Elint standards of quality.
 
 _Programs must be written for people to read, and only incidentally for machines to execute._ 
 _-Hal Abelson_
@@ -18,10 +18,10 @@ Always include ```__init__.py``` to folders you intend importing modules from.
 
 ## ```Functions```
 
-Suppose you want to write a function that multiplies and integer by two. A good example of formatting is:
+Suppose you want to write a function that multiplies an integer by two. A good example of formatting is:
 
-```
-def double(value):
+```python
+def double(value: int|float) -> int|float:
     """
     Utility function to double a value by two
 
@@ -35,14 +35,22 @@ def double(value):
     return value * 2.
 ```
 
-Aways start with ```Utility function to...```; it helps to understand what the functions are supposed to do. Also, follow the formatation of arguments and returns, it helps to debug the code and also to understand the code when someone faces it by first time.
+Try always to start with ```Utility function to...```; it helps to understand what the functions are supposed to do. Also, follow the formatting of arguments and returns as well as the type hinting, it helps to debug the code and to understand it better when someone faces it by the first time.
+
+Remember that giving intuitive names to your functions, classes and variables as well as keeping your functions small and atomical are good practices and help on the code readability. If you have a code snippet that repeats itself, it is also worth of creating a specific function so it becomes reusable.
 
 Follow the example to know how to format a function that returns more than one argument:
 
-```
+```python
+from typing import Tuple
+
 def get_gradients_and_filters(
-    model, images, layer_name, class_index, use_guided_grads
-):
+    model: tf.keras.Model,
+    images: numpy.ndarray,
+    layer_name: str,
+    class_index: int,
+    use_guided_grads: boolean
+) -> Tuple[tf.Tensor, tf.Tensor]:
     """
     Generate guided gradients and convolutional outputs with an inference.
 
@@ -77,13 +85,13 @@ def get_gradients_and_filters(
     return conv_outputs, grads
 ```
 
-**Note**: do not focus on what the function does. Focus on formatting.
+**Note**: do not focus on what the function does. Focus on the formatting.
 
 ## ```Classes```
 
-Classes follow the formatation of function, e.g.:
+Classes follow the formatting of functions, e.g.:
 
-```
+```python
 class Father:
     """
     Utility class to define a Father
@@ -101,7 +109,7 @@ class Father:
 
 Note that the constructor doesn't require any explanation since it is a constructor. Beware to follow the function guideline for each function of the class. See a more complex example:
 
-```
+```python
 import tensorflow as tf
 
 class ConvDiscriminator:
@@ -115,17 +123,18 @@ class ConvDiscriminator:
         dim (int): Number of filters of first convolutional layer
         num_downsamplings (int): Number of downsamplings
         norm (str): String indicating which normalization to use. Available: None, 'batch_norm',
-                    'instance_norm' and 'layer_norm'
+            'instance_norm' and 'layer_norm'
         lr_scheduler (tf.keras.optimizers.schedules.LearningRateSchedule): Learning rate scheduler
-                    class
+            class
     """
 
     def __init__(self,
-        input_shape=(256, 256, 3),
-        dim=64,
-        num_downsamplings=3,
-        norm='instance_norm',
-        lr_scheduler=LinearDecay(0.0001, 200, 100, 0.5)):
+        input_shape: tuple = (256, 256, 3),
+        dim: int = 64,
+        num_downsamplings: int = 3,
+        norm: str = 'instance_norm',
+        lr_scheduler: tf.keras.optimizers.schedules.LearningRateSchedule = LinearDecay(0.0001, 200, 100, 0.5)
+    ):
 
         self.norm = get_norm_layer(norm)
         self.input_shape = input_shape
@@ -138,7 +147,7 @@ class ConvDiscriminator:
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr_scheduler, beta_1=self.lr_scheduler.beta_1)
         self.model = self.build()
 
-    def build(self):
+    def build(self) -> tf.keras.Model:
         """
         Utility function to build layers
 
@@ -177,19 +186,17 @@ class ConvDiscriminator:
         return model
 ```
 
-The above example shows a class that builds the convolutional discriminator of a generative adversarial network. Again, focus just on the formatation.
-
 ## ```Creating a module```
 
-Suppose I want to write a module on my code called ```image``` and inside I'll write two functions: ```resize_activations``` and ```normalize_activations```. Follow the example to make such a thing:
+Suppose you want to write a module on the code called ```image``` and inside it you need to write two functions: ```resize_activations``` and ```normalize_activations```. Follow the example to make such a thing:
 
-```
+```python
 """Core module for image related operations"""
 from skimage import transform
 import tensorflow as tf
 import numpy as np
 
-def resize_activations(tensor, input_shape):
+def resize_activations(tensor: tf.Tensor, input_shape: Tuple[int, int]) -> tf.Tensor:
     """
     Utility function to resize a given tensor
 
@@ -216,7 +223,7 @@ def resize_activations(tensor, input_shape):
 
     return tf.convert_to_tensor(np.array(resized_activations), dtype=tf.float32)
 
-def normalize_activations(tensor):
+def normalize_activations(tensor: tf.Tensor) -> tf.Tensor:
     """
     Utility function to normalize a given tensor
 
@@ -245,18 +252,16 @@ def normalize_activations(tensor):
     return tf.stack(tensors, axis=0)
 ```
 
-**Note**: focus just on formatting by now.
-
-Note that the module starts with ```"""Core module for image related operations"""```. It helps anyone who reads the code to understand what happens in this specific module. **Aways** start with it.
+Note that the module starts with ```"""Core module for image related operations"""```. It helps anyone who reads the code to understand what happens in this specific module. Try **always** to start with it.
 
 ## ```Importing modules```
 
-It is very easy to make your code a mess, so, when importing modules beware to make it organized. Split the modules imported from your own code and installed. Example:
+It is very easy to make your code a mess, so, when importing modules beware to make it organized. Split the modules between the ones imported from your own code and the installed ones. Example:
 
-Suppode I have the same module described above. When importing, do:
+Suppose you have the same module described above. When importing, seek to do it as the following:
 
-```
-# installed packages. Note that longer imports go firt
+```python
+# installed packages. Note that longer imports go first
 from PIL import Image
 import pandas as pd
 import numpy as np
@@ -264,15 +269,74 @@ import json
 import io
 import os
 
-# modules from my code
+# modules from your code
 from image import resize_activations, normalize_activations
 ```
 
-Another option is to write ```import image``` and use ```image.resize_activations``` or ```image.normalize_activations```. This way who reads the code can know exactly from those functions are called.
+Another option is to write ```import image``` and use ```image.resize_activations``` or ```image.normalize_activations```. This way who reads the code can know exactly where those functions are called from.
+
+## ```Dealing with Exceptions```
+
+When you have to treat errors in the code, avoid using bare `except` clauses. The problem with these is that they catch `SystemExit` and `KeyboardInterrupt` exceptions, which makes it harder to interrupt a program using CTRL-C, and can also disguise other problems. It is recommended catching `Exception`, which will catch all errors. See an example below:
+
+```python
+# Instead of this:
+try:
+    some_important_code()
+except:
+    exception_handling_code()
+
+# Seek to do the following:
+try:
+    some_important_code()
+except Exception:
+    exception_handling_code()
+```
+
+If possible, it is even better to catch specific errors so you know exactly how your code should behave in these specific cases. E.g.:
+```python
+async def token_in_blacklist(token: str):
+    """
+    Checks if token is in blacklist table.
+    Returns True if token is in blacklist and False if not.
+    """
+    try:
+        async with async_session.begin():
+            query = select(TokenBlacklist).where(TokenBlacklist.token == token)
+            results = await async_session.execute(query)
+            data = results.scalars().one()
+        return True
+    except NoResultFound:
+        return False
+```
+
+Also, raise specific errors so that callers of the code can handle the error appropriately. Besides that, it makes it easier to understand and debug. It can be done with Python built-in exceptions or custom defined ones.
+```python
+# built-in error
+if incorrect_value():
+    raise ValueError
+
+# custom error
+if incorrect_value():
+    raise SpecificIncorrectValueError
+```
+
+When raising custom errors, define them following the base model:
+```python
+class ProductMismatchException(Exception):
+    """Exception raised when user is trying to transfer from one compartment to another with different products ids.
+    Attributes:
+        message: explanation of the error
+    """
+
+    def __init__(self, message="Destination product does not match with origin product."):
+        self.message = message
+        super().__init__(self.message)
+```
 
 ## ```Defining requirements.txt```
 
-When writing some code, you shall need to define which libraries you're using. **Aways** define the versions, e.g.:
+When writing some code, you shall need to define which libraries you're using. **Always** define the versions, e.g.:
 
 ```
 tensorflow==2.1.0
