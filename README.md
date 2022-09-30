@@ -346,3 +346,7 @@ opencv-python==4.1.0.25
 ```
 
 It is needed to prevent errors when running the code in another machine beyond it was tested.
+
+## ```Extra Tips```
+* There is a VS Code extension called [Mintlify Doc Writer](https://marketplace.visualstudio.com/items?itemName=mintlify.document) which helps with code documentation, it automatically generates the documentation for the selected code. It can help you save a lot of time.
+* To standardize code formatting, always run black before committing. To know more about how it works, access their [documentation](https://pypi.org/project/black/).
